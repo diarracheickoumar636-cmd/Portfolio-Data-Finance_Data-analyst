@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portefeuille d'Analyste de Données</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuration Tailwind pour la police Inter et un thème de couleurs -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // PALETTE MIXTE ÉLÉGANTE (FOND GRIS DOUX + COULEURS VIVES)
+                        'primary-accent': '#06b6d4', // Cyan Vif (Utilisé pour le titre principal)
+                        'secondary-accent': '#F97316', // Orange Mandarine (Utilisé dans les projets)
+                        
+                        // COULEURS SPÉCIFIQUES POUR LES BLOCS ENTIERS
+                        'accent-header': '#0EA5E9', // Bleu Clair (Pour Entête)
+                        'accent-violet': '#8B5CF6', // Violet (Pour Data Analysis)
+                        'accent-vert': '#10B981', // Vert Kaki (Pour Finance)
+                        'accent-marron': '#8A3324', // Marron Chocolat (Pour Comptabilité)
+                        
+                        // COULEURS DE HOVER PLUS FONCÉES POUR GARANTIR LE TEXTE BLANC
+                        'accent-violet-hover': '#7b4bd3',
+                        'accent-vert-hover': '#0d8969',
+                        'accent-marron-hover': '#6b281c',
+                        'secondary-accent-hover': '#d96314', // Orange légèrement plus foncé
+
+                        // COULEURS DE FOND ET TEXTE
+                        'light-bg': '#F3F4F6', // NOUVEAU FOND GRIS BLEUTÉ TRÈS DOUX (Blanc Sale)
+                        'card-bg': '#FFFFFF', // Blanc Pur (Cartes, Entête, pour le contraste)
+                        'text-dark': '#1F2937', // Texte Noir (Lisibilité Maximale sur fond blanc)
+                        'text-light': '#FFFFFF', // Texte Blanc (Lisibilité Maximale sur fond coloré)
+                        'text-muted': '#4B5563', // Texte Gris Foncé (Moins Important)
+
+                        // COULEUR DE FOND SPÉCIFIQUE À L'ENTÊTE ANIMÉ
+                        'header-bg-static': '#EFF6FF', // Fond Bleu Ciel Statique
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Définition de la police Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        /* Keyframes pour l'animation séquentielle (Glissement et fondu) */
+        @keyframes slide-up-fade {
+            0% {
+                opacity: 0;
+                transform: translateY(60px); /* Augmentation du déplacement vers le bas */
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Classe appliquée à toutes les sections pour l'animation */
+        .fade-in-section {
+            opacity: 0;
+            transition: opacity 0.5s ease-out; /* Fallback */
+        }
+        
+        /* La classe visible active l'animation (déclenchée par JavaScript) */
+        .fade-in-section.visible {
+            opacity: 1;
+            animation: slide-up-fade 0.8s forwards ease-out; 
+        }
+
+        /* Styles pour les animations de survol (Effet de profondeur et couleur) */
+        .card-hover-effect {
+            transition: all 0.3s ease-in-out;
+            border-bottom: 4px solid transparent; 
+        }
+        
+        /* RÈGLE GÉNÉRALE DE HOVER */
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(6, 182, 212, 0.5); /* Ombre Cyan */
+            border-bottom-color: #F97316; /* Bordure Orange */
+        }
+
+        /* RÈGLES SPÉCIFIQUES POUR LES HOVER DES CARTES DE COULEUR */
+        .bg-accent-violet.card-hover-effect:hover {
+            background-color: '#7b4bd3 !important'; /* Violet foncé */
+        }
+        .bg-accent-vert.card-hover-effect:hover {
+            background-color: '#0d8969 !important'; /* Vert foncé */
+        }
+        .bg-accent-marron.card-hover-effect:hover {
+            background-color: '#6b281c !important'; /* Marron foncé */
+        }
+        .bg-secondary-accent.card-hover-effect:hover {
+            background-color: '#d96314 !important'; /* Orange foncé */
+        }
+        /* Maintien du fond blanc pour les cartes Projet au survol */
+        .bg-card-bg.card-hover-effect:hover {
+             background-color: '#FFFFFF !important'; 
+        }
+
+        /* Keyframes pour l'animation du titre (conservée pour l'effet "wow") */
+        @keyframes sweep {
+            0% {
+                clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+            }
+            100% {
+                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+            }
+        }
+
+        .animated-title {
+            clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+            animation: sweep 1.2s forwards; 
+            animation-delay: 0.2s;
+            display: inline-block;
+            color: #1F2937; /* Couleur Noire pour le titre sur fond clair */
+        }
+
+        /* Styles pour l'animation du message de bienvenue (conservée et très visible) */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-40px); }
+            5% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-40px); }
+        }
+
+        #welcome-message {
+            animation: fadeInOut 5s ease-in-out forwards; 
+            display: none; 
+            z-index: 1000;
+        }
+
+        /* FOND DE L'ENTÊTE: REVENIR À UN FOND BLEU CIEL STATIQUE ET ÉLÉGANT */
+        .animated-hero-bg {
+            background-color: #EFF6FF; /* Utilisation de la couleur 'header-bg-static' */
+            position: relative;
+            color: #1F2937; 
+        }
+        
+        /* Ajustement du texte de l'entête pour le contraste */
+        .animated-hero-bg h1, .animated-hero-bg p, .animated-hero-bg h2, .animated-hero-bg ul {
+            color: #1F2937 !important; 
+        }
+
+        /* Correction pour les éléments à l'intérieur de l'entête */
+        .animated-hero-bg .text-accent-header {
+            color: #1F2937 !important; 
+        }
+        .animated-hero-bg .text-secondary-accent {
+            color: #F97316 !important; 
+        }
+        
+        /* NOUVEAU STYLE POUR LUMINOSITÉ SUR LA PHOTO DE PROFIL (SUBTIL ET NATUREL) */
+        .profile-photo-filter {
+            filter: brightness(1.05) contrast(1.05); /* Amélioration subtile */
+        }
+    </style>
+</head>
+<body class="bg-light-bg text-text-dark font-sans antialiased overflow-x-hidden">
+
+    <!-- Message de Bienvenue Flottant et Animé -->
+    <div id="welcome-message" class="fixed top-8 left-1/2 transform -translate-x-1/2 bg-secondary-accent text-white p-5 rounded-xl shadow-2xl text-xl font-bold border-b-4 border-primary-accent">
+        Bienvenue sur mon Portfolio ! Bonne lecture.
+    </div>
+
+    <!-- Section d'Entête (Hero) -->
+    <header class="animated-hero-bg py-16 sm:py-24 shadow-2xl border-b-4 border-accent-header fade-in-section">
+        <div class="container mx-auto px-4 text-center">
+            <!-- La photo de profil est insérée ici -->
+            <div class="fade-in-section">
+                <!-- PHOTO DE PROFIL: TAILLE AGRANDIE À w-64 h-64 + FILTRE SUBTIL -->
+                <img 
+                    src="https://raw.githubusercontent.com/diarracheickoumar636-cmd/Cheick/main/Gemini_Generated_Image_adrnd0adrnd0adrn%20(1).png" 
+                    alt="Photo de profil de Cheick Oumar Diarra" 
+                    class="w-64 h-64 rounded-full mx-auto mb-4 object-cover border-4 border-secondary-accent shadow-lg profile-photo-filter"
+                    onerror="this.onerror=null; this.src='https://placehold.co/256x256/ECECEC/1F2937?text=CD'"
+                >
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl font-extrabold mb-2 animated-title">
+                Cheick Oumar Diarra
+            </h1>
+            <!-- COULEUR BLEU CLAIR APPLIQUÉE ICI -->
+            <p class="text-xl sm:text-2xl text-accent-header mb-6">
+                Analyste Financier Junior & Data Analyst | Bilingue
+            </p>
+
+            <!-- SECTION EXPERTISES CLÉS -->
+            <div class="mt-4 pt-4 border-t border-text-muted/20 max-w-xl mx-auto">
+                <h2 class="text-xl font-semibold text-secondary-accent mb-3">Expertises Clés</h2>
+                <ul class="text-text-dark space-y-1 text-base sm:text-lg flex flex-wrap justify-center">
+                    <li class="inline-block mx-2 mb-2 p-1 bg-light-bg/50 rounded-lg border border-text-muted/30">💵 Analyse Financière & Comptabilité</li>
+                    <li class="inline-block mx-2 mb-2 p-1 bg-light-bg/50 rounded-lg border border-text-muted/30">🌐 Bilingue (Français/Anglais)</li>
+                    <li class="inline-block mx-2 mb-2 p-1 bg-light-bg/50 rounded-lg border border-text-muted/30">📈 Excel & Power BI (Reporting)</li>
+                    <li class="inline-block mx-2 mb-2 p-1 bg-light-bg/50 rounded-lg border border-text-muted/30">🐍 Python (Analyse de Données)</li>
+                </ul>
+            </div>
+            <!-- FIN SECTION EXPERTISES -->
+
+            <a href="#projets" class="mt-8 inline-block bg-primary-accent hover:bg-secondary-accent text-white font-semibold py-3 px-8 rounded-full transition duration-300 shadow-lg transform hover:scale-105">
+                Voir les Projets Clés
+            </a>
+        </div>
+    </header>
+
+    <!-- Section À Propos -->
+    <section id="a-propos" class="py-16 sm:py-20 bg-light-bg fade-in-section">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-4xl font-bold text-center text-primary-accent mb-10">À Propos</h2>
+            <div class="bg-card-bg p-8 rounded-xl shadow-lg border border-secondary-accent/20">
+                <!-- Texte révisé pour une meilleure organisation et fluidité -->
+                <p class="text-lg text-text-dark leading-relaxed mb-4">
+                    Ma curiosité pour les mécanismes d'affaires m'a naturellement orienté vers l'analyse financière et, plus récemment, vers le Data Analysis. Fort d'une base solide en <b>Comptabilité</b> et d'un atout <b>bilingue</b> (Français/Anglais), je me positionne aujourd'hui comme un <b>Junior Analyste Financier et Data Analyst</b> capable de fournir une perspective complète et stratégique.
+                </p>
+                <p class="text-lg text-text-dark leading-relaxed mb-4">
+                    Mon profil se distingue par une double expertise. D'un côté, la rigueur financière pour évaluer la santé d'une entreprise, calculer les ratios et projeter les performances futures. De l'autre, la puissance analytique pour transformer les ensembles de données complexes en <b>insights exploitables</b>, en mobilisant des outils de pointe tels qu'<b>Excel, Power BI</b> et <b>Python</b>.
+                </p>
+                <!-- NOUVEAU PARAGRAPHE SUR L'EXPÉRIENCE EN AUDIT -->
+                <p class="text-lg text-text-dark leading-relaxed mb-4">
+                    J'ai consolidé cette rigueur au cours d'un stage de 6 mois en <b>cabinet d'Audit, Comptabilité et Conseil (AE2C)</b>, où j'ai mené des missions d'audit financier pour des ONG (CARES-Mali, GERES), des entreprises industrielles (KOUMALIM, SOMACOF) et des banques (BICIM). Cette expérience m'a permis d'approfondir mes connaissances en <b>Contrôle Interne</b>, en vérification de l'authenticité des pièces justificatives, en inventaire physique et en contrôle des procédures de dépenses (mise en concurrence, bons de livraison, contrats).
+                </p>
+                <p class="text-lg text-text-dark leading-relaxed">
+                    Je suis particulièrement efficace pour synthétiser des chiffres complexes en <b>recommandations stratégiques</b> claires, accessibles à la fois aux décideurs et aux équipes opérationnelles. Animé par cette volonté de transformer les données en leviers stratégiques, je maintiens une soif constante d'apprendre afin de renforcer ce pont essentiel entre l'information brute et la prise de décision éclairée.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOUVELLE SECTION SERVICES DÉTAILLÉS -->
+    <section id="services" class="py-16 sm:py-20 bg-light-bg fade-in-section">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <!-- TITRE CHANGÉ ICI -->
+            <h2 class="text-4xl font-bold text-center text-primary-accent mb-12">Mes Services</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Service 1: Data Analysis (Cycle complet) - VIOLET (Fond) -->
+                <div class="bg-accent-violet p-6 rounded-xl shadow-lg border border-accent-violet/50 card-hover-effect">
+                    <h3 class="text-xl font-semibold mb-3 text-text-light flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19h12M9 19c0 1.105-2.239 2-5 2s-5-.895-5-2h10zM12 21.5c-2.761 0-5.5-.895-5.5-2m5.5 2V6"></path></svg>
+                        Data Analysis & Reporting (Cycle Complet)
+                    </h3>
+                    <ul class="space-y-2 text-text-light list-disc list-inside ml-4">
+                        <li><b>Traitement et Compréhension :</b> Acquisition, exploration et nettoyage (ETL) des données complexes.</li>
+                        <li><b>Visualisation Attrayante :</b> Création de <b>tableaux de bord</b> (Power BI, Matplotlib) précis, détaillés et très clairs.</li>
+                        <li><b>Interprétation Stratégique :</b> Analyse des dashboards, identification des <b>insights clés</b> et rédaction de rapports avec hypothèses et recommandations actionnables.</li>
+                    </ul>
+                </div>
+
+                <!-- Service 2: Analyse Financière & Conseil - VERT KAKI (Fond) -->
+                <div class="bg-accent-vert p-6 rounded-xl shadow-lg border border-accent-vert/50 card-hover-effect">
+                    <h3 class="text-xl font-semibold mb-3 text-text-light flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 16v-2"></path></svg>
+                        Analyse Financière & Conseil
+                    </h3>
+                    <ul class="space-y-2 text-text-light list-disc list-inside ml-4">
+                        <li><b>Performance :</b> Calcul de <b>ratios financiers</b> et analyse de la performance d'entreprise.</li>
+                        <li><b>Planification :</b> Participation à la <b>budgétisation</b>, au suivi des dépenses et au contrôle des écarts.</li>
+                        <li><b>Conseil Stratégique :</b> Aide à la prise de décision stratégique, et accompagnement dans l'analyse des risques.</li>
+                    </ul>
+                </div>
+
+                <!-- Service 3: Comptabilité et Contrôle - MARRON CHOCOLAT (Fond) -->
+                <div class="bg-accent-marron p-6 rounded-xl shadow-lg border border-accent-marron/50 card-hover-effect">
+                    <h3 class="text-xl font-semibold mb-3 text-text-light flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Comptabilité et Contrôle
+                    </h3>
+                    <ul class="space-y-2 text-text-light list-disc list-inside ml-4">
+                        <li><b>Opérations :</b> Enregistrement, traitement et conservation des opérations comptables.</li>
+                        <li><b>Conformité :</b> Établissement des états financiers et rédaction de rapports de conformité.</li>
+                        <li><b>Audit :</b> Contrôle de l'authenticité des pièces justificatives, des contrats et des procédures internes (acquis en cabinet d'audit).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Conclusion sur les Soft Skills -->
+            <div class="mt-10 text-center bg-secondary-accent text-white p-6 rounded-xl shadow-2xl border border-primary-accent">
+                <p class="text-xl font-semibold mb-2">Mon Engagement : Rigueur et Développement</p>
+                <p class="text-lg">
+                    Mes services sont soutenus par une rigueur sans faille, une grande <b>polyvalence</b> et la capacité d'apprendre rapidement sous supervision. Je suis <b>bilingue</b> (Français - excellent niveau, Anglais - bon niveau), ce qui me permet d'opérer efficacement dans des environnements internationaux.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Compétences Techniques (Même logique de couleur) -->
+    <section id="competences" class="py-16 sm:py-20 bg-light-bg fade-in-section">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-4xl font-bold text-center text-primary-accent mb-12">Compétences Techniques</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <!-- Catégorie 1: Visualisation & Reporting - VIOLET (Fond) -->
+                <div class="bg-accent-violet p-6 rounded-xl shadow-lg border border-text-muted/20 hover:border-primary-accent transition duration-300 card-hover-effect">
+                    <h3 class="text-xl font-semibold mb-3 text-text-light flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-text-light" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1H8a1 1 0 01-1-1v-4zm5 0a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4zM4 9a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V9z" clip-rule="evenodd"></path></svg>
+                        Visualisation & Reporting
+                    </h3>
+                    <ul class="space-y-2 text-text-light">
+                        <li><b>Power BI</b> (Rapports interactifs & DAX)</li>
+                        <li>Tableau (Dashboards & Storytelling)</li>
+                        <li><b>Excel Avancé</b> (Modélisation Financière, VBA)</li>
+                        <li>Matplotlib & Seaborn (Python)</li>
+                    </ul>
+                </div>
+
+                <!-- Catégorie 2: Analyse Avancée & Finance - ORANGE (Fond) -->
+                <div class="bg-secondary-accent p-6 rounded-xl shadow-lg border border-text-muted/20 hover:border-primary-accent transition duration-300 card-hover-effect">
+                    <h3 class="text-xl font-semibold mb-3 text-text-light flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-text-light" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-7-9a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4zm5 0a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1H9a1 1 0 01-1-1v-4zm5 0a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z" clip-rule="evenodd"></path></svg>
+                        Analyse Avancée & Finance
+                    </h3>
+                    <ul class="space-y-2 text-text-light">
+                        <li><b>Audit Financier & Contrôle</b> (Vérification des pièces, Inventaire)</li>
+                        <li><b>Comptabilité</b> (IFRS/PCG, lecture de bilans)</li>
+                        <li>Python (Pandas, NumPy pour l'analyse)</li>
+                        <li>SQL (Requêtes de données)</li>
+                    </ul>
+                </div>
+
+                <!-- Catégorie 3: Langues & Soft Skills - MARRON CHOCOLAT (Fond) -->
+                <div class="bg-accent-marron p-6 rounded-xl shadow-lg border border-text-muted/20 hover:border-primary-accent transition duration-300 card-hover-effect">
+                    <h3 class="text-xl font-semibold mb-3 text-text-light flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-text-light" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V7zM6 9a1 1 0 000 2h8a1 1 0 100-2H6z"></path></svg>
+                        Langues & Soft Skills
+                    </h3>
+                    <ul class="space-y-2 text-text-light">
+                        <li><b>Bilingue Français/Anglais</b> (Communication fluide)</li>
+                        <li>Rigueur et sens du détail</li>
+                        <li>Résolution de problèmes complexes</li>
+                        <li>Git / Cloud (Notions)</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Projets -->
+    <section id="projets" class="py-16 sm:py-20 bg-light-bg fade-in-section">
+        <!-- Contenu des projets inchangé -->
+        <div class="container mx-auto px-4 max-w-6xl">
+            <h2 class="text-4xl font-bold text-center text-primary-accent mb-12">Projets Clés d'Analyse</h2>
+
+            <div class="space-y-12">
+
+                <!-- Projet 1: Analyse Financière et des Ventes (ChocolateCo) -->
+                <div class="bg-card-bg p-8 rounded-xl shadow-xl border border-secondary-accent/10 card-hover-effect">
+                    <h3 class="text-3xl font-bold text-secondary-accent mb-3">1. Analyse de Ventes et de Performance (ChocolateCo)</h3>
+                    <p class="text-text-muted mb-4 italic">Outils: <b>Power BI</b>, Excel (Modélisation COGS), Analyse Financière</p>
+                    <p class="text-lg text-text-dark mb-6">
+                        Analyse approfondie (2012-2015) pour une entreprise de chocolat, révélant un désalignement critique entre le volume des ventes et la rentabilité. La majorité du chiffre d'affaires était générée par des produits à marge faible, masquant le véritable potentiel de profit.
+                    </p>
+                    <ul class="list-disc list-inside text-text-dark space-y-1 ml-4 mb-4">
+                        <li><b>Insight Pivot :</b> Le produit <b>Espresso Chocolate</b> était le leader en volume de ventes, mais son <b>coût des marchandises vendues (COGS) élevé</b> réduisait sa marge à 32%. Le <b>Coffee Chocolate</b>, moins vendu, offrait la meilleure marge nette (33%), le désignant comme le véritable moteur de profit.</li>
+                        <li><b>Recommandation Stratégique :</b> <b>Cesser de pousser l'Espresso</b> au même niveau de prix sans optimisation de sa chaîne d'approvisionnement. Réallouer les efforts marketing vers le <b>Coffee Chocolate</b> pour maximiser la marge nette globale.</li>
+                    </ul>
+                    <!-- Le conteneur du dashboard est maintenant en colonne simple et sans lien de texte -->
+                    <div class="mt-6 flex flex-col gap-4">
+                        <!-- DASHBOARD 1: Lien GitHub RAW -->
+                        <img 
+                            src="https://raw.githubusercontent.com/diarracheickoumar636-cmd/Cheick/main/WhatsApp%20Image%202025-07-06%20at%2016.26.41_01f18c3d.jpg" 
+                            alt="Dashboard de performance des ventes de ChocolateCo" 
+                            class="w-full rounded-lg shadow-md border border-text-muted/50 object-cover"
+                            onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/374151?text=Dashboard+Indisponible'"
+                        >
+                    </div>
+                </div>
+
+                <!-- Projet 2: Optimisation des Opérations : Analyse de Ventes Pizzeria -->
+                <div class="bg-card-bg p-8 rounded-xl shadow-xl border border-secondary-accent/10 card-hover-effect">
+                    <h3 class="text-3xl font-bold text-secondary-accent mb-3">2. Optimisation des Opérations : Analyse de Ventes Pizzeria</h3>
+                    <p class="text-text-muted mb-4 italic">Outils: <b>Power BI</b> (Dashboard), Modélisation des Comportements Clients</p>
+                    <p class="text-lg text-text-dark mb-6">
+                        Analyse d'une année complète de données de vente pour une Pizzeria, ciblant non seulement le revenu total, mais surtout les goulots d'étranglement opérationnels et les opportunités d'activation stratégique basées sur les habitudes d'achat des clients.
+                    </p>
+                    <ul class="list-disc list-inside text-text-dark space-y-1 ml-4 mb-4">
+                        <li><b>Insight Critique :</b> Le <b>Vendredi</b>, jour traditionnellement fort dans la restauration, est la <b>journée la plus faible</b> en termes de ventes ($100K) — une anomalie majeure qui indique une fuite de clients vers la concurrence.</li>
+                        <li><b>Analyse du Comportement :</b> L'analyse du panier moyen ($38.31) et de la quantité moyenne (2 pizzas) confirme que la clientèle est majoritairement composée de <b>groupes/familles</b>. L'heure de pointe est le <b>soir (54% du revenu)</b>.</li>
+                        <li><b>Recommandation Stratégique :</b> Lancer une campagne <b>"Vendredi Soir Famille"</b> ciblée avec des promotions (Bundles) pour récupérer le revenu perdu. L'activation des heures creuses (Matin) est identifiée comme une opportunité de croissance à faible risque.</li>
+                    </ul>
+                    <!-- Le conteneur du dashboard est maintenant en colonne simple et sans lien de texte -->
+                    <div class="mt-6 flex flex-col gap-4">
+                        <!-- DASHBOARD 2: Lien GitHub RAW -->
+                        <img 
+                            src="https://raw.githubusercontent.com/diarracheickoumar636-cmd/Cheick/main/IMG_1471.PNG" 
+                            alt="Dashboard d'Analyse des Ventes de Pizzeria" 
+                            class="w-full rounded-lg shadow-md border border-text-muted/50 object-cover"
+                            onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/374151?text=Dashboard+Indisponible'"
+                        >
+                    </div>
+                </div>
+
+                <!-- Projet 3: Performance Financière et Optimisation des Marges (Ventes de Vélos) -->
+                <div class="bg-card-bg p-8 rounded-xl shadow-xl border border-secondary-accent/10 card-hover-effect">
+                    <h3 class="text-3xl font-bold text-secondary-accent mb-3">3. Performance Financière et Optimisation des Marges (Ventes de Vélos)</h3>
+                    <p class="text-text-muted mb-4 italic">Outils: <b>Power BI</b>, Excel (Modélisation COGS), Analyse Géographique</p>
+                    <p class="text-lg text-text-dark mb-6">
+                        Analyse d'un marché mondial pour un détaillant de vélos ($118.7M de ventes), se concentrant sur la cartographie de la rentabilité par produit et par pays. L'objectif était d'élever la marge brute globale (13.5%) en ciblant l'inefficacité des coûts.
+                    </p>
+                    <ul class="list-disc list-inside text-text-dark space-y-1 ml-4 mb-4">
+                        <li><b>Contraste Richesse/Rentabilité :</b> Le produit <b>Paseo</b> est le leader des ventes ($33M), mais le <b>VTT</b> est le produit le plus rentable (19% de marge brute), soulignant un déséquilibre dans la stratégie de prix et de coûts.</li>
+                        <li><b>Déficit de Marge :</b> Le produit <b>Montana</b> n'atteint qu'une marge de <b>6%</b>, identifié comme un fardeau majeur pour la rentabilité globale.</li>
+                        <li><b>Recommandation Géographique :</b> L'analyse des bénéfices révèle que l'<b>Allemagne</b> (24% du profit total), la <b>France</b> et le <b>Canada</b> (20% chacun) sont les marchés à prioriser, tandis que le ciblage des segments à faible performance (<b>Small Business</b>) représente un potentiel de croissance.</li>
+                    </ul>
+                    <!-- Le conteneur du dashboard est maintenant en colonne simple et sans lien de texte -->
+                    <div class="mt-6 flex flex-col gap-4">
+                        <!-- DASHBOARD 3: Lien GitHub RAW -->
+                        <img 
+                            src="https://raw.githubusercontent.com/diarracheickoumar636-cmd/Cheick/main/Bike%20sales%20dashboad%20(1).png" 
+                            alt="Dashboard d'Analyse des Ventes de Vélos" 
+                            class="w-full rounded-lg shadow-md border border-text-muted/50 object-cover"
+                            onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/374151?text=Dashboard+Indisponible'"
+                        >
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Contact -->
+    <section id="contact" class="bg-card-bg py-12 border-t border-primary-accent/50 fade-in-section">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-primary-accent mb-6">Contactez-moi</h2>
+            <p class="text-xl text-text-muted mb-8">
+                J'aime discuter de projets basés sur les données. n'hésitez pas à me contacter !
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 text-lg">
+                <a href="mailto:diarracheickoumar636@gmail.com" class="bg-primary-accent hover:bg-secondary-accent text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
+                    diarracheickoumar636@gmail.com
+                </a>
+                <a href="https://www.linkedin.com/in/cheick-oumar-diarra-170782266" target="_blank" class="bg-secondary-accent hover:bg-primary-accent text-white font-semibold py-2 px-6 rounded-full transition duration-300 transform hover:scale-105">
+                    LinkedIn
+                </a>
+            </div>
+            <p class="text-text-muted mt-10 text-sm">
+                &copy; 2024 Portefeuille de Cheick Oumar Diarra. Construit avec Tailwind CSS.
+            </p>
+        </div>
+    </section>
+    
+    <!-- Bouton de Retour en Haut -->
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="back-to-top" class="fixed bottom-6 right-6 p-3 bg-secondary-accent text-white rounded-full shadow-lg hover:bg-primary-accent transition-all duration-300 opacity-0 transform translate-y-4" style="z-index: 999;">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+
+    <script>
+        // Fonction JavaScript pour afficher le message de bienvenue et gérer l'animation séquentielle
+        document.addEventListener("DOMContentLoaded", function() {
+            // Afficher le message de bienvenue au chargement
+            const welcomeMessage = document.getElementById('welcome-message');
+            welcomeMessage.style.display = 'block';
+
+            // ----------------------------------------------------
+            // GESTION DE L'ANIMATION SÉQUENTIELLE (SECTION PAR SECTION)
+            // ----------------------------------------------------
+
+            const sections = document.querySelectorAll('.fade-in-section');
+            
+            const observerOptions = {
+                root: null, // Par rapport à la fenêtre d'affichage
+                rootMargin: '0px',
+                threshold: 0.1 // Déclenchement à 10% de visibilité
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Récupère l'élément parent de toutes les sections
+                        const currentSection = entry.target;
+                        
+                        // Trouve l'index de la section actuelle dans le NodeList
+                        const index = Array.from(sections).indexOf(currentSection);
+                        
+                        // Déclenche l'animation
+                        currentSection.classList.add('visible');
+                        
+                        // Délai séquentiel basé sur l'index de la section
+                        currentSection.style.animationDelay = `${index * 0.25}s`;
+                        
+                        // Arrête d'observer cette section
+                        observer.unobserve(currentSection);
+                    }
+                });
+            }, observerOptions);
+
+            // Attache l'observateur à chaque section
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Gérer le bouton de retour en haut (déjà en place)
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('opacity-100', 'translate-y-0');
+                    backToTopButton.classList.remove('opacity-0', 'translate-y-4');
+                } else {
+                    backToTopButton.classList.remove('opacity-100', 'translate-y-0');
+                    backToTopButton.classList.add('opacity-0', 'translate-y-4');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
